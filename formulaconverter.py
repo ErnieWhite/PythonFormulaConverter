@@ -101,6 +101,7 @@ class App(tk.Tk):
 
         window_icon = tk.PhotoImage(file="fc.png")
         self.iconphoto(True, window_icon)
+        self.title("Formula Converter")
 
         self.frame = ttk.Frame(self, padding=(10, 10, 10, 10))
 
