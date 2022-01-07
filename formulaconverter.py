@@ -2,6 +2,7 @@ import pyperclip
 from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
+import re
 
 
 class Model:
@@ -119,23 +120,23 @@ class Controller:
 
 def find_multiplier(s: str) -> float:
     """finds the multiplier for the formula in s. If this cannot be done then raises a value error"""
-    if len(s) < 2:
-        return 0
-    code = s[0].upper()
-    if code == '*':
-        return float(s[1:])
-    elif code == 'X':
-        return float(s[1:])
-    elif code == '-':
-        return 1 + float(s) / 100
-    elif code == '+':
-        return 1 + float(s) / 100
-    elif code == 'D':
-        return 1 / float(s[1:])
-    elif code == 'G':
-        return 1 / (1 - float(s[2:]) / 100)
-    else:
-        raise ValueError('Invalid formula: ' + s)
+    # I realize this is not a good example of a regex, but dammit I did it without putting on my google goggles!
+    if re.match(r"^(\*|X|D|-|\+|gp)([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", s,  flags=re.IGNORECASE):
+        code = s[0].upper()
+        if code == '*':
+            return float(s[1:])
+        elif code == 'X':
+            return float(s[1:])
+        elif code == '-':
+            return 1 + float(s) / 100
+        elif code == '+':
+            return 1 + float(s) / 100
+        elif code == 'D':
+            return 1 / float(s[1:])
+        elif code == 'G':
+            return 1 / (1 - float(s[2:]) / 100)
+        else:
+            raise ValueError('Invalid formula: ' + s)
 
 
 def find_multiplier_formula(m: float) -> str:
