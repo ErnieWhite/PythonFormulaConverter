@@ -4,6 +4,119 @@ import tkinter as tk
 from tkinter import ttk
 
 
+class Model:
+    pass
+
+
+class View:
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.controller = None
+
+        # Create Widgets
+
+        # formula row
+        ttk.Label(self, text='Formula').grid(row=0, column=0, sticky='w')
+        self.formula_var = tk.StringVar()
+        self.formula_entry = ttk.Entry(self, textvariable=self.formula_var)
+        self.formula_entry.grid(row=1, column=1, sticky='ew')
+        self.clear_button = ttk.Button(self, text='Clear', command=self.clear_button_clicked)
+        self.clear_button.grid(row=1, column=2, sticky='e')
+        self.formula_var.trace_add('w', self.update)
+
+        # multiplier row
+        ttk.Label(self, text='Multiplier').grid(row=1, column=0, sticky='w')
+        self.multiplier_entry = ttk.Entry(self)
+        self.multiplier_entry.grid(row=2, column=1, sticky='ew')
+        self.multiplier_button = ttk.Button(
+            self, text='Copy',
+            command=lambda: self.copy_button_clicked(self.multiplier_entry.get())
+        )
+        self.multiplier_button.grid(row=2, column=2, sticky='w')
+
+        # discount row
+        ttk.Label(self, text='Discount').grid(row=1, column=0, sticky='w')
+        self.discount_entry = ttk.Entry(self)
+        self.discount_entry.grid(row=3, column=1, sticky='ew')
+        self.discount_button = ttk.Button(
+            self,
+            text='Copy',
+            command=lambda: self.copy_button_clicked(self.discount_entry.get())
+        )
+        self.discount_button.grid(row=3, column=2, sticky='e')
+
+        # markup row
+        ttk.Label(self, text='Markup').grid(row=1, column=0, sticky='w')
+        self.markup_entry = ttk.Entry(self)
+        self.markup_entry.grid(row=3, column=1, sticky='ew')
+        self.markup_button = ttk.Button(
+            self,
+            text='Copy',
+            command=lambda: self.copy_button_clicked(self.markup_entry.get())
+        )
+        self.markup_button.grid(row=3, column=2, sticky='e')
+
+        # gross_profit row
+        ttk.Label(self, text='Gross Profit').grid(row=1, column=0, sticky='w')
+        self.gross_profit_entry = ttk.Entry(self)
+        self.gross_profit_entry.grid(row=3, column=1, sticky='ew')
+        self.gross_profit_button = ttk.Button(
+            self,
+            text='Copy',
+            command=lambda: self.copy_button_clicked(self.gross_profit_entry.get())
+        )
+        self.gross_profit_button.grid(row=3, column=2, sticky='e')
+
+        # setup the event listener
+        self.formula_var.trace_add('w', self.update)
+
+    def clear_button_clicked(self):
+        if self.controller:
+            self.controller.clear()
+
+    def copy_button_clicked(self, f):
+        if self.controller:
+            self.controller.copy(f)
+
+    def update(self):
+        """
+        Handles when the formula entry text changes
+        :return None:
+        """
+        if self.controller:
+            self.controller.update_displays()
+
+    def set_controller(self, controller):
+        """
+        Set the controller
+        :param controller:
+        :return None:
+        """
+        self.controller = controller
+
+
+class Controller:
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+
+    def clear(self):
+        """ Has the Model set all the entry widgets to '' """
+        if self.model:
+            self.model.clear()
+
+    def copy(self, f):
+        """ Has the Model put the value in f on the system clipboard """
+        if self.model:
+            self.model.copy(f)
+
+    def update_displays(self):
+        """ Has the Model update the conversion entry widgets """
+        if self.model:
+            self.model.update()
+
+
 def find_multiplier(s: str) -> float:
     """finds the multiplier for the formula in s. If this cannot be done then raises a value error"""
     if len(s) < 2:
