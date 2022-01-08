@@ -10,7 +10,7 @@ def find_multiplier(s: str) -> float:
     """finds the multiplier for the formula in s. If this cannot be done then raises a value error"""
 
     # I realize this is not a good example of a regex, but dammit I did it without putting on my google goggles!
-    if re.match(r"^(\*|X|D|-|\+|gp)([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", s, flags=re.IGNORECASE):
+    if re.match(r"^(\*|X|D|-|\+|gp)[-,+]?([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", s, flags=re.IGNORECASE):
         code = s[0].upper()
         if code == '*':
             return float(s[1:])
@@ -29,11 +29,17 @@ def find_multiplier(s: str) -> float:
 
 
 def find_multiplier_formula(m: float) -> str:
-    return f'*{m:.6}'
+    if m == 0:
+        return 'Invalid Formula'
+    else:
+        return f'*{m:.6}'
 
 
 def find_markup_formula(m: float) -> str:
-    return f'D{1 / m:.6}'
+    if m == 0:
+        return 'Invalid Formula'
+    else:
+        return f'D{1 / m:.6}'
 
 
 def find_discount_formula(m: float) -> str:
@@ -41,7 +47,10 @@ def find_discount_formula(m: float) -> str:
 
 
 def find_gross_profit_formula(m: float) -> str:
-    return f'GP{(1 - 1 / m) * 100:.6}'
+    if m == 0:
+        return 'Invalid Formula'
+    else:
+        return f'GP{(1 - 1 / m) * 100:.6}'
 
 
 def create_image(filepath):
@@ -102,13 +111,13 @@ class FormulaDisplay(ttk.Frame):
         else:
             self.textvariable = None
         super().__init__(container, **kwargs)
+        self.update_in_progress = False
         # create the image to be used for the copy buttons
         self.image = create_image('img.png')
         self.label = ttk.Label(self, text=self.text, width=11)
         self.label.grid(row=0, column=0, sticky=tk.W)
 
         self.entry = ttk.Entry(self, state=tk.DISABLED, textvariable=self.textvariable)
-        # self.entry = ttk.Entry(self, state=tk.DISABLED)
         self.entry.grid(row=0, column=1, sticky=(tk.W, tk.E))
 
         self.copy_button = ttk.Button(
@@ -172,9 +181,66 @@ class App(tk.Tk):
         self.frame.columnconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.formula_entry.entry.bind("<KeyRelease>", self.do_something)
+        self.formula_var.trace_add('write', self.update_multiplier)
+        self.formula_var.trace_add('write', self.update_discount)
+        self.formula_var.trace_add('write', self.update_markup)
+        self.formula_var.trace_add('write', self.update_gross_profit)
+        # self.formula_entry.entry.bind("<KeyRelease>", self.do_something)
 
-    def do_something(self, e):
+    def update_multiplier(self, *args):
+        if self.multiplier_display.update_in_progress:
+            return
+        formula = self.formula_var.get().upper()
+        if re.match(r"^(\*|X|D|-|\+|gp)[-,+]?([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", formula, flags=re.IGNORECASE):
+            multiplier = find_multiplier(formula)
+            multiplier_formula = find_multiplier_formula(multiplier)
+            self.multiplier_var.set(multiplier_formula)
+        else:
+            self.multiplier_var.set('')
+
+        self.multiplier_display.update_in_progress = False
+
+    def update_discount(self, *args):
+        if self.discount_display.update_in_progress:
+            return
+        formula = self.formula_var.get().upper()
+        if re.match(r"^(\*|X|D|-|\+|gp)[-,+]?([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", formula, flags=re.IGNORECASE):
+            multiplier = find_multiplier(formula)
+            discount_formula = find_discount_formula(multiplier)
+            self.discount_var.set(discount_formula)
+        else:
+            self.discount_var.set('')
+
+        self.discount_display.update_in_progress = False
+
+    def update_markup(self, *args):
+        if self.markup_display.update_in_progress:
+            return
+        formula = self.formula_var.get().upper()
+        if re.match(r"^(\*|X|D|-|\+|gp)[-,+]?([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", formula, flags=re.IGNORECASE):
+            multiplier = find_multiplier(formula)
+            markup_formula = find_markup_formula(multiplier)
+            self.markup_var.set(markup_formula)
+        else:
+            self.markup_var.set('')
+
+        self.markup_display.update_in_progress = False
+
+    def update_gross_profit(self, *args):
+        if self.gross_profit_display.update_in_progress:
+            return
+        formula = self.formula_var.get().upper()
+        if re.match(r"^(\*|X|D|-|\+|gp)[-,+]?([0-9]+|[0-9]+\.[0-9]+|\.[0-9]+)$", formula, flags=re.IGNORECASE):
+            multiplier = find_multiplier(formula)
+            gross_profit_formula = find_gross_profit_formula(multiplier)
+            self.gross_profit_var.set(gross_profit_formula)
+        else:
+            self.gross_profit_var.set('')
+
+        self.gross_profit_display.update_in_progress = False
+
+    def do_something(self, var, index, mode):
+        print([var, index, mode])
         try:
             formula = self.formula_entry.get().upper()
             multiplier = find_multiplier(formula)
@@ -199,7 +265,7 @@ class App(tk.Tk):
 
     def formula_entry_clear(self):
         self.formula_var.set("")
-        self.clear_displays()
+        # self.clear_displays()
 
     def clear_displays(self):
         self.multiplier_var.set('')
