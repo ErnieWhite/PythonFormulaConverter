@@ -187,7 +187,7 @@ class App(tk.Tk):
         self.formula_var.trace_add('write', self.update_gross_profit)
         # self.formula_entry.entry.bind("<KeyRelease>", self.do_something)
 
-    def update_multiplier(self, *args):
+    def update_multiplier(self, *_):
         if self.multiplier_display.update_in_progress:
             return
         formula = self.formula_var.get().upper()
@@ -200,7 +200,7 @@ class App(tk.Tk):
 
         self.multiplier_display.update_in_progress = False
 
-    def update_discount(self, *args):
+    def update_discount(self, *_):
         if self.discount_display.update_in_progress:
             return
         formula = self.formula_var.get().upper()
@@ -213,7 +213,7 @@ class App(tk.Tk):
 
         self.discount_display.update_in_progress = False
 
-    def update_markup(self, *args):
+    def update_markup(self, *_):
         if self.markup_display.update_in_progress:
             return
         formula = self.formula_var.get().upper()
@@ -226,7 +226,7 @@ class App(tk.Tk):
 
         self.markup_display.update_in_progress = False
 
-    def update_gross_profit(self, *args):
+    def update_gross_profit(self, *_):
         if self.gross_profit_display.update_in_progress:
             return
         formula = self.formula_var.get().upper()
