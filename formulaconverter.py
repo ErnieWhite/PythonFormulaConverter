@@ -1,9 +1,8 @@
-import re
 import tkinter as tk
+import re
 from tkinter import ttk
 
 import pyperclip
-from PIL import Image, ImageTk
 
 
 def find_multiplier(s: str) -> float:
@@ -53,12 +52,6 @@ def find_gross_profit_formula(m: float) -> str:
         return f'GP{(1 - 1 / m) * 100:.6}'
 
 
-def create_image(filepath):
-    image = Image.open(filepath)
-    image = image.resize((16, 16))
-    return ImageTk.PhotoImage(image)
-
-
 class FormulaEntry(ttk.Frame):
     def __init__(self, container, **kwargs):
         if 'textvariable' in kwargs:
@@ -67,14 +60,14 @@ class FormulaEntry(ttk.Frame):
         else:
             self.textvariable = None
         super().__init__(container, **kwargs)
-        self.image = create_image('eraser.png')
+        # self.image = create_image('eraser.png')
         self.label = ttk.Label(self, text="Formula", width=11)
         self.label.grid(row=0, column=0, sticky=tk.W)
 
         self.entry = ttk.Entry(self, textvariable=self.textvariable)
         self.entry.grid(row=0, column=1, sticky=(tk.E, tk.W))
 
-        self.clear_button = ttk.Button(self, text="Clear", command=lambda: app.formula_entry_clear(), image=self.image)
+        self.clear_button = ttk.Button(self, text="Clear", command=lambda: app.formula_entry_clear())
         self.clear_button.grid(row=0, column=2, sticky=tk.E)
 
         self.columnconfigure(1, weight=1)
@@ -113,7 +106,7 @@ class FormulaDisplay(ttk.Frame):
         super().__init__(container, **kwargs)
         self.update_in_progress = False
         # create the image to be used for the copy buttons
-        self.image = create_image('img.png')
+        # self.image = create_image('img.png')
         self.label = ttk.Label(self, text=self.text, width=11)
         self.label.grid(row=0, column=0, sticky=tk.W)
 
@@ -124,7 +117,7 @@ class FormulaDisplay(ttk.Frame):
             self,
             text="Copy",
             command=lambda: pyperclip.copy(self.entry.get()),
-            image=self.image
+            # image=self.image
         )
         self.copy_button.grid(row=0, column=2, sticky=tk.E)
         self.columnconfigure(1, weight=1)
