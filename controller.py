@@ -10,19 +10,53 @@ class Controller:
 
         self.init_unit_base_frame()
         self.init_unit_formula_frame()
+        self.add_unit_base_event_handlers()
+        self.add_unit_formula_event_handlers()
 
     def init_unit_base_frame(self):
         float_vcmd = (self.master.register(self.validate_number), '%P')
         ivcmd = (self.master.register(self.on_invalid),)
-        self.view.unit_basis_frame.unit_price_entry.configure(validate='key', validatecommand=float_vcmd, invalidcommand=ivcmd)
-        self.view.unit_basis_frame.basis_value_entry.configure(validate='key', validatecommand=float_vcmd, invalidcommand=ivcmd)
+        self.view.unit_basis_frame.unit_price_entry.configure(
+            validate='key',
+            validatecommand=float_vcmd,
+            invalidcommand=ivcmd,
+            textvariable=self.model.ub_unit_price_var,
+        )
+        self.view.unit_basis_frame.basis_value_entry.configure(
+            validate='key',
+            validatecommand=float_vcmd,
+            invalidcommand=ivcmd,
+            textvariable=self.model.ub_basis_value_var,
+        )
 
     def init_unit_formula_frame(self):
         formula_vcmd = (self.master.register(self.validate_formula), '%P')
         float_vcmd = (self.master.register(self.validate_number), '%P')
         ivcmd = (self.master.register(self.on_invalid),)
-        self.view.unit_formula_frame.unit_price_entry.configure(validate='key', validatecommand=float_vcmd, invalidcommand=ivcmd)
-        self.view.unit_formula_frame.formula_entry.configure(validate='key', validatecommand=formula_vcmd, invalidcommand=ivcmd)
+        self.view.unit_formula_frame.unit_price_entry.configure(
+            validate='key',
+            validatecommand=float_vcmd,
+            invalidcommand=ivcmd,
+            textvariable=self.model.uf_formula_var,
+        )
+        self.view.unit_formula_frame.formula_entry.configure(
+            validate='key',
+            validatecommand=formula_vcmd,
+            invalidcommand=ivcmd,
+            textvariable=self.model.uf_unit_price_var,
+        )
+        self.view.unit_basis_frame.multiplier_formula_entry.configure(
+            textvariable=self.model.ub_multilier_formula_var,
+        )
+        self.view.unit_basis_frame.discount_formula_entry.configure(
+            textvariable=self.model.ub_discount_formula_var,
+        )
+        self.view.unit_basis_frame.markup_formula_entry.configure(
+            textvariable=self.model.ub_markup_formula_var,
+        )
+        self.view.unit_basis_frame.gross_profit_formula_entry.configure(
+            textvariable=self.model.ub_gross_profit_formula_var,
+        )
 
     @staticmethod
     def validate_number(value):
@@ -42,3 +76,14 @@ class Controller:
         print('invalid')
         self.master.bell()
         self.master.bell()
+
+    def add_unit_base_event_handlers(self):
+        self.view.unit_basis_frame.unit_price_entry.bind('<KeyRelease>', self.calculate_formulas)
+        self.view.unit_basis_frame.basis_value_entry.bind('KeyRelease>', self.calcualte_formulas)
+
+    def add_unit_formula_event_handlers(self):
+        pass
+
+    def calculate_formulas(self):
+        if self.model.ub_unit_price_var is not None and self.model.ub_basis_value_var is not None:
+            multiplier = self.model.ub_unit_price_var / self.model.ub_basis_value_var
