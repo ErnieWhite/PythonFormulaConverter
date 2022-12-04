@@ -46,16 +46,16 @@ class Controller:
             textvariable=self.model.uf_unit_price_var,
         )
         self.view.unit_basis_frame.multiplier_formula_entry.configure(
-            textvariable=self.model.ub_multilier_formula_var,
+            textvariable=self.model.multilier_formula_var,
         )
         self.view.unit_basis_frame.discount_formula_entry.configure(
-            textvariable=self.model.ub_discount_formula_var,
+            textvariable=self.model.discount_formula_var,
         )
         self.view.unit_basis_frame.markup_formula_entry.configure(
-            textvariable=self.model.ub_markup_formula_var,
+            textvariable=self.model.markup_formula_var,
         )
         self.view.unit_basis_frame.gross_profit_formula_entry.configure(
-            textvariable=self.model.ub_gross_profit_formula_var,
+            textvariable=self.model.gross_profit_formula_var,
         )
 
     @staticmethod
