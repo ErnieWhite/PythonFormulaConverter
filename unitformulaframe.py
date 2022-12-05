@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 
 
@@ -22,23 +23,3 @@ class UnitFormulaFrame(ttk.Frame):
 
         self.calculated_basis_label.grid(row=2, column=0, sticky='w')
         self.calculated_basis_entry.grid(row=2, column=1, sticky='we')
-
-
-class View(ttk.Frame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-
-        # create the container to hold the frames
-        self.tabs = ttk.Notebook(self)
-        self.tabs.pack(pady=10, expand=True)
-
-        self.unit_basis_frame = UnitBasisFrame(self)
-        self.unit_formula_frame = UnitFormulaFrame(self)
-
-        self.unit_basis_frame.pack(fill='both', expand=True)
-        self.unit_formula_frame.pack(fill='both', expand=True)
-
-        self.tabs.add(self.unit_basis_frame, text='Unit Price/Basis Value')
-        self.tabs.add(self.unit_formula_frame, text='Unit Price/Formula')
-
-        self.pack()
